@@ -28,34 +28,32 @@ class _SignInState extends State<SignIn> {
   final ageController = TextEditingController();
   final phoneController = TextEditingController();
 
-  final CollectionReference donorsCollection =
+  final CollectionReference donarsCollection =
       FirebaseFirestore.instance.collection('donar');
+      
+      
+addDoners(){
+  final data={"name":nameController.text,
+   "age":ageController.text,
+    "phone": phoneController.text, 
+    "bloodgroup": selectedGroup
+    
+     };
+     
+  donarsCollection.add(data);
+ 
 
-  addDonors() {
-    final data = {
-      "name": nameController.text,
-      "age": int.tryParse(ageController.text) ?? 0,
-      "phone": int.tryParse(phoneController.text) ?? 0,
-      "bloodgroup": selectedGroup ?? ""
-    };
-
-    donorsCollection.add(data);
-  }
+}
 
   final bloodGroup = ["A+", "A-", 'B-', 'B+', 'O+', 'O-', 'AB-', "AB+"];
   String? selectedGroup;
 
-  bool get isRegisterButtonEnabled =>
-      nameController.text.isNotEmpty &&
-      ageController.text.isNotEmpty &&
-      phoneController.text.isNotEmpty &&
-      selectedGroup != null;
-
-  List<UserData> userList = []; // Define userList here
+  List<UserData> userList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+    
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,8 +81,13 @@ class _SignInState extends State<SignIn> {
                 style: TextStyle(color: Colors.black),
                 controller: nameController,
                 decoration: InputDecoration(
+                  // filled: true,
+                  // fillColor: Color.fromARGB(255, 193, 14, 14),
                   hintText: 'Name',
                   hintStyle: TextStyle(color: Colors.black),
+                  // border: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(20),
+                  // ),
                 ),
               ),
             ),
@@ -92,10 +95,16 @@ class _SignInState extends State<SignIn> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: TextField(
+                // style: TextStyle(color: Colors.white),
                 controller: ageController,
                 decoration: InputDecoration(
+                  // filled: true,
+                  // fillColor: Color.fromARGB(255, 193, 14, 14),
                   hintText: 'Age',
                   hintStyle: TextStyle(color: Colors.black),
+                  // border: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(20),
+                  // ),
                 ),
               ),
             ),
@@ -103,13 +112,20 @@ class _SignInState extends State<SignIn> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: TextField(
+              //  style: TextStyle(color: Colors.white),
                 controller: phoneController,
                 decoration: InputDecoration(
+                  // filled: true,
+                  // fillColor: Color.fromARGB(255, 193, 14, 14),
                   hintText: 'Phone',
                   hintStyle: TextStyle(color: Colors.black),
+                  // border: OutlineInputBorder(
+                  //   borderRadius: BorderRadius.circular(20),
+                  // ),
                 ),
               ),
             ),
+            
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -123,63 +139,59 @@ class _SignInState extends State<SignIn> {
                   });
                 },
                 decoration: InputDecoration(
+                  // fillColor: Color.fromARGB(255, 193, 14, 14),
                   hintText: 'Blood group',
                   hintStyle: TextStyle(color: Colors.black),
+                  
                 ),
-                style: TextStyle(color: Colors.red), // Adjust as needed
+                style: TextStyle(color: const Color.fromARGB(255, 214, 9, 9)),
                 value: selectedGroup,
               ),
             ),
             SizedBox(height: 40),
             ElevatedButton(
-              onPressed: isRegisterButtonEnabled
-                  ? () {
-                      addUser();
-                      addDonors();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserDetailsPage(
-                            userList: userList,
-                          ),
-                        ),
-                      );
-                    }
-                  : null,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserDetailsPage(userList: userList)));
+                addDoners();
+                addUser();
+              },
               child: Text(
                 'Register',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color:Colors.white),
+                
               ),
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 193, 14, 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              primary: Color.fromARGB(255, 193, 14, 14), 
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
+            ),
             ),
           ],
         ),
+        
       ),
     );
   }
 
-  void addUser() {
-    if (nameController.text.isNotEmpty &&
-        ageController.text.isNotEmpty &&
-        phoneController.text.isNotEmpty &&
-        selectedGroup != null) {
-      setState(() {
-        userList.add(UserData(
-          name: nameController.text,
-          age: int.tryParse(ageController.text) ?? 0,
-          phone: int.tryParse(phoneController.text) ?? 0,
-          bloodGroup: selectedGroup!,
-        ));
-        nameController.clear();
-        ageController.clear();
-        phoneController.clear();
-        selectedGroup = null;
-      });
-    }
+void addUser() {
+  if (nameController.text.isNotEmpty &&
+      ageController.text.isNotEmpty &&
+      phoneController.text.isNotEmpty &&
+      selectedGroup != null) {
+    setState(() {
+      userList.add(UserData(
+        name: nameController.text,
+        age: int.parse(ageController.text),
+        phone: int.parse(phoneController.text),
+        bloodGroup: selectedGroup!,
+      ));
+      nameController.clear();
+      ageController.clear();
+      phoneController.clear();
+      selectedGroup = null;
+    });
   }
 }
+}
+
